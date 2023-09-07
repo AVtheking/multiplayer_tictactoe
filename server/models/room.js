@@ -19,4 +19,12 @@ const roomSchema = mongoose.Schema({
         type: Boolean,
         default:true
     },
+    turn: playerSchema,
+    turnIndex: {
+        type: Number,
+        default:0
+    
+    }
 })
+const Room = mongoose.model("Room", roomSchema);
+module.exports = Room;
