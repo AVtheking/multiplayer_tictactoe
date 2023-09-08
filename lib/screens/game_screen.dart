@@ -18,6 +18,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   void initState() {
     ref.read(socketMethodsProvider).updateRoomListener(context);
     ref.read(socketMethodsProvider).updatePlayerListener(context);
+    ref.read(socketMethodsProvider).pointIncreaseListner(context);
+    ref.read(socketMethodsProvider).endgameListner(context);
     setState(() {});
     super.initState();
   }
@@ -32,10 +34,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     return Scaffold(
       body: roomData['isJoin']
           ? const WatingLobby()
-          : const SafeArea(
+          : SafeArea(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [ScoreBoard(), TicTacToeBoard()],
+                children: [
+                  const ScoreBoard(),
+                  const TicTacToeBoard(),
+                  Text('${roomData['turn']['nickname']}\'s turn  ')
+                ],
               ),
             ),
     );

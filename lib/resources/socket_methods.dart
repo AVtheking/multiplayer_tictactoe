@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 import 'package:tictactoe/models/player.dart';
+import 'package:tictactoe/resources/game_methods.dart';
 import 'package:tictactoe/resources/socket_client.dart';
 import 'package:tictactoe/screens/game_screen.dart';
 import 'package:tictactoe/utils/utils.dart';
@@ -12,12 +14,14 @@ final player2Provider = StateProvider<Player?>((ref) => null);
 final displayElementProvider =
     StateProvider<List<String>>((ref) => ['', '', '', '', '', '', '', '', '']);
 
-final filledBoxes = StateProvider((ref) => 0);
+final filledBoxesProvider = StateProvider<int>((ref) => 0);
 
 class SocketMethods {
   final Ref _ref;
+
   SocketMethods({required Ref ref}) : _ref = ref;
   final _socketClient = SocketClient.instance.socket!;
+  Socket get socketClient => _socketClient;
   // Future<void> sendMessage(String message) async {
   //   await _socketClient.sink.add(message);
   // }
@@ -83,14 +87,51 @@ class SocketMethods {
     });
   }
 
-  void tapped(BuildContext context) {
+  void tappedListener(BuildContext context) {
     _socketClient.on("tapped", (data) {
       final displayElement = _ref.read(displayElementProvider);
       displayElement[data['index']] = data['choice'];
       _ref
           .read(displayElementProvider.notifier)
           .update((state) => displayElement);
+      _ref.read(filledBoxesProvider.notifier).state++;
       _ref.read(roomProvider.notifier).update((state) => data['room']);
+      _ref.watch(gameMethodsProvider).checkWinner(context, _socketClient);
+    });
+  }
+
+  void pointIncreaseListner(BuildContext context) {
+    _socketClient.on("pointIncrease", (data) {
+      final player1 = _ref.read(player1Provider)!;
+      final player2 = _ref.read(player2Provider)!;
+      if (data['socketId'] == player1.socketId) {
+        _ref
+            .read(player1Provider.notifier)
+            .update((state) => Player.fromMap(data));
+      } else {
+        _ref
+            .read(player2Provider.notifier)
+            .update((state) => Player.fromMap(data));
+      }
+    });
+  }
+
+  void endgameListner(BuildContext context) {
+    _socketClient.on("endgame", (playerData) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("${playerData['nickname']} won the game!"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.popUntil(context, (route) => false);
+                    },
+                    child: const Text("ok"))
+              ],
+            );
+          });
     });
   }
 }

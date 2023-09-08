@@ -18,7 +18,7 @@ io.on("connection", (socket) => {
     console.log("connected!", socket.id);
     socket.on("createRoom", async ({ nickname }) => {
         try
-        {console.log("hello");
+        {
         let room = new Room();
         let player = {
             socketId: socket.id,
@@ -28,7 +28,7 @@ io.on("connection", (socket) => {
         room.players.push(player);
         room.turn = player
             room = await room.save();
-            console.log(room);
+            // console.log(room);
         const roomId = room._id.toString();
         socket.join(roomId);//so that If we emit out data it will go to only in this room not others one
         //io->send data to everyone
@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
                 room.players.push(player);
                 room.isJoin = false;
                 room = await room.save();
-                console.log(room);
+                // console.log(room);
                 io.to(roomId).emit("joinRoomSuccess", room);
                 io.to(roomId).emit("updatePlayers", room.players);
                 io.to(roomId).emit("updateRoom",room);
@@ -97,6 +97,23 @@ io.on("connection", (socket) => {
     }
     catch (e) {
         console.log(e);
+        }
+    })
+    socket.on("winner", async ({ winnerSocketId, roomId }) => {
+        try {
+            let room = await Room.findById(roomId);
+            let winner = room.players.find((player) => player.socketId == winnerSocketId);
+            winner.points += 1;
+            room = await room.save();
+            if (winner.points >= room.maxRounds) {
+                socket.emit("endgame", winner);
+            }
+            else {
+                socket.emit("pointIncrease", winner);
+            }
+            
+        } catch (e) {
+            console.log(e);
         }
     })
 });
