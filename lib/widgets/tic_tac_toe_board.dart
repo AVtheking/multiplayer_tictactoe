@@ -20,6 +20,7 @@ class _TicTacToeBoardState extends ConsumerState<TicTacToeBoard> {
 
   @override
   Widget build(BuildContext context) {
+    final displayElements = ref.watch(displayElementProvider);
     final size = MediaQuery.of(context).size;
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: size.height * 0.7, maxWidth: 500),
@@ -35,14 +36,18 @@ class _TicTacToeBoardState extends ConsumerState<TicTacToeBoard> {
                     border: Border.all(
                   color: Colors.white24,
                 )),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    'X',
+                    displayElements[index],
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 100,
                       shadows: [
-                        Shadow(color: Colors.blue, blurRadius: 40),
+                        Shadow(
+                            color: displayElements[index] == 'O'
+                                ? Colors.red
+                                : Colors.blue,
+                            blurRadius: 40),
                       ],
                     ),
                   ),

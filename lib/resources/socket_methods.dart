@@ -12,6 +12,8 @@ final player2Provider = StateProvider<Player?>((ref) => null);
 final displayElementProvider =
     StateProvider<List<String>>((ref) => ['', '', '', '', '', '', '', '', '']);
 
+final filledBoxes = StateProvider((ref) => 0);
+
 class SocketMethods {
   final Ref _ref;
   SocketMethods({required Ref ref}) : _ref = ref;
@@ -76,8 +78,19 @@ class SocketMethods {
 
   void updateRoomListener(BuildContext context) {
     _socketClient.on("updateRoom", (room) {
-      print(room.toString());
+      // print(room.toString());
       _ref.read(roomProvider.notifier).update((state) => room);
+    });
+  }
+
+  void tapped(BuildContext context) {
+    _socketClient.on("tapped", (data) {
+      final displayElement = _ref.read(displayElementProvider);
+      displayElement[data['index']] = data['choice'];
+      _ref
+          .read(displayElementProvider.notifier)
+          .update((state) => displayElement);
+      _ref.read(roomProvider.notifier).update((state) => data['room']);
     });
   }
 }

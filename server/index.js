@@ -8,6 +8,7 @@ const io = new Server(server);
 
 const mongoose = require('mongoose');
 const Room = require('./models/room');
+const { REPL_MODE_SLOPPY } = require('repl');
 
 const DB = "mongodb+srv://Ankit:Ankit123@cluster0.vjwi9kc.mongodb.net/?retryWrites=true&w=majority";
 
@@ -73,6 +74,29 @@ io.on("connection", (socket) => {
         }
         catch (e) {
             console.log(e);
+        }
+    })
+    socket.on("tap", async ({ roomId, index }) => {
+    try
+      {  let room = await Room.findById(roomId);
+        let choice = room.turn.playertype;
+        if (room.turnIndex == 0) {
+            room.turnIndex = 1;
+            room.turn = room.players[1];
+        }
+        else {
+            room.turnIndex = 0;
+            room.turn = room.players[0];
+        }
+        room = await room.save();
+        io.to(roomId).emit("tapped", {
+            index,
+            choice,
+            room
+        });
+    }
+    catch (e) {
+        console.log(e);
         }
     })
 });
