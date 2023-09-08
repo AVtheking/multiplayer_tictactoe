@@ -22,6 +22,13 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    ref.read(socketMethodsProvider).createRoomSuccess(context);
+
+    super.initState();
+  }
+
   void createRoom(String nickname) {
     ref.watch(socketMethodsProvider).createRoom(nickname);
   }

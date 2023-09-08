@@ -4,12 +4,14 @@ import 'package:tictactoe/utils/colors.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController namecontroller;
   final String hintText;
+  final isReadOnly;
 
-  const CustomTextField({
-    Key? key, // Use 'key' instead of 'super.key'
-    required this.namecontroller,
-    required this.hintText,
-  }) : super(key: key);
+  const CustomTextField(
+      {Key? key, // Use 'key' instead of 'super.key'
+      required this.namecontroller,
+      required this.hintText,
+      this.isReadOnly = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class CustomTextField extends StatelessWidget {
         ),
       ]),
       child: TextField(
+        readOnly: isReadOnly,
         controller: namecontroller,
         decoration: InputDecoration(
           fillColor: bgColor, // Ensure 'bgColor' is defined correctly

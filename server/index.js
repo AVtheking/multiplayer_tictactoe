@@ -44,10 +44,11 @@ io.on("connection", (socket) => {
         try {
             if (!roomId.match(/^[0-9a-fA-F]{24}$/)) {
                 socket.emit("error", "Please Enter valid room id ")//Here socket is user instead of io because we want to send message to ourselves
+                console.log("Please Enter valid room id ");
                 return;
             }
             let room = await Room.findById(roomId);
-            if(room.isJoin)
+            if(room.isJoin==true)
            { let player = {
                 socketId: socket.id,
                 nickname,
@@ -58,11 +59,15 @@ io.on("connection", (socket) => {
                 room.players.push(player);
                 room.isJoin = false;
                 room = await room.save();
-                io.to(roomId).emit("join Room success", room);
+                console.log(room);
+                io.to(roomId).emit("joinRoomSuccess", room);
+                io.to(roomId).emit("updatePlayers", room.players);
+                io.to(roomId).emit("updateRoom",room);
             }
             
             else {
-                socket.emit("error","The game is in progress ,try again later")
+                socket.emit("error", "The game is in progress ,try again later")
+                console.log('The game is in progress ,try again later');
             }
         
         }
