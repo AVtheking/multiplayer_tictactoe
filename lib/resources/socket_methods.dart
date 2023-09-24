@@ -31,6 +31,8 @@ class SocketMethods {
       _socketClient.emit("createRoom", {
         {"nickname": nickname}
       });
+    } else {
+      print("error");
     }
   }
 
@@ -40,6 +42,7 @@ class SocketMethods {
         'nickname': nickname,
         'roomId': roomId,
       });
+      print("done");
     }
   }
 
@@ -82,7 +85,7 @@ class SocketMethods {
 
   void updateRoomListener(BuildContext context) {
     _socketClient.on("updateRoom", (room) {
-      // print(room.toString());
+      print(room.toString());
       _ref.read(roomProvider.notifier).update((state) => room);
     });
   }

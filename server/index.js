@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const http = require('http');
-const PORT =  process.env.PORT|| 3000;
+const PORT =  process.env.PORT|| 4000;
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
@@ -15,7 +15,7 @@ const DB = "mongodb+srv://Ankit:Ankit123@cluster0.vjwi9kc.mongodb.net/?retryWrit
 app.use(express.json());
 
 io.on("connection", (socket) => {
-    console.log("connected!", socket.id);
+    console.log("connected!", socket.id);   
     socket.on("createRoom", async ({ nickname }) => {
         try
         {
@@ -121,7 +121,7 @@ io.on("connection", (socket) => {
 mongoose.connect(DB).then(() => {
     console.log("connected successfully")
 }).catch(e => {
-    console.log(e);
+    console.log("hi");
 });
 
 server.listen(PORT, "0.0.0.0", async () => {

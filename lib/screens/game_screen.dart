@@ -26,11 +26,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final player1 = ref.watch(player1Provider);
-    // final player2 = ref.watch(player2Provider);
-    // print(player1!.nickname);
-    // print(player2!.nickname);
+    final player1 = ref.watch(player1Provider);
+    final player2 = ref.watch(player2Provider);
+    print(player1);
+    print(player2);
     final roomData = ref.watch(roomProvider)!;
+    print(roomData);
     return Scaffold(
       body: roomData['isJoin']
           ? const WatingLobby()

@@ -7,7 +7,7 @@ import 'package:tictactoe/screens/main_menu.dart';
 import 'package:tictactoe/utils/colors.dart';
 
 void main() {
-  runApp(ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
